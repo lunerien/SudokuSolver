@@ -132,12 +132,12 @@ namespace SuDoKuSePuKu
 
         private void button1_Click(object sender, EventArgs e)
         {
-
+            jedna_brakujaca();
         }
 
         private void jedna_brakujaca()
         {
-            for(int i = 0; i < 9; i++)
+            for (int i = 0; i < 9; i++)
             {
                 brakujacaWiersz(i);
                 brakujacaKolumna(i);
@@ -148,29 +148,114 @@ namespace SuDoKuSePuKu
             }
         }
 
+        private int[] zwrocBrakujace(int[] numArr)
+        {
+            HashSet<int> myRange = new HashSet<int>(Enumerable.Range(1, 9));
+            myRange.ExceptWith(numArr);
+            return myRange.ToArray();
+        }
+
         private void brakujacaWiersz(int x)
         {
             int counter = 0;
+            int puste_pole = 0;
             int[] numArr = new int[9];
             NumField nf;
-            for(int i = 0; i < 9; i++)
+            for (int i = 0; i < 9; i++)
             {
                 nf = arr[i, x];
                 if (nf.isSet)
                 {
                     numArr[counter++] = nf.value;
                 }
+                else
+                {
+                    puste_pole = i;
+                }
+
+
+
+
+            }
+            if (counter == 8)
+            {
+
+                int[] myRange = zwrocBrakujace(numArr);
+                nf = arr[puste_pole, x];
+                nf.setText(myRange[0].ToString());
+                //https://stackoverflow.com/questions/3700448/how-can-i-print-the-contents-of-an-array-horizontally
             }
         }
 
         private void brakujacaKolumna(int y)
         {
+            int counter = 0;
+            int puste_pole = 0;
+            int[] numArr = new int[9];
+            NumField nf;
+            for (int i = 0; i < 9; i++)
+            {
+                nf = arr[y, i];
+                if (nf.isSet)
+                {
+                    numArr[counter++] = nf.value;
+                }
+                else
+                {
+                    puste_pole = i;
+                }
 
+
+
+
+            }
+            if (counter == 8)
+            {
+
+                int[] myRange = zwrocBrakujace(numArr);
+                nf = arr[y, puste_pole];
+                nf.setText(myRange[0].ToString());
+                //https://stackoverflow.com/questions/3700448/how-can-i-print-the-contents-of-an-array-horizontally
+            }
         }
 
         private void brakujacaKwadrat(int y, int x)
         {
+            int[] numArr = new int[9];
+            NumField nf;
+            int counter = 0;
+            int brakujaca_pole_x = 0, brakujaca_pole_y = 0;
+            int xk = ((int)(x / 3)) * 3;
+            int yk = ((int)(y / 3)) * 3;
+            for (int i = xk; i < xk + 3; i++)
+            {
+                for (int ii = yk; ii < yk + 3; ii++)
+                {
+                    nf = arr[i, ii];
+                    if (nf.isSet)
+                    {
+                        numArr[counter++] = nf.value;
+                    }
+                    else
+                    {
+                        brakujaca_pole_x = i;
+                        brakujaca_pole_y = ii;
+                    }
+                }
+            }
 
+            if (counter == 8)
+            {
+
+                int[] myRange = zwrocBrakujace(numArr);
+                nf = arr[brakujaca_pole_x, brakujaca_pole_y];
+                nf.setText(myRange[0].ToString());
+            }
+        }
+        private void wykluczanie(int x, int y)
+        {
+            int[,,] brakujace_w_okienku = new int[9, 9, 9];
+            
         }
     }
 }

@@ -59,7 +59,7 @@ namespace SuDoKuSePuKu
 
         }
 
-        private void setText(String text)
+        public void setText(String text)
         {
 
             if (text.Length > 1)
@@ -73,8 +73,18 @@ namespace SuDoKuSePuKu
                 this.value = value;
                 tb.Text = text;
             }
+            else
+            {
+                this.value = 0;
+                tb.Text = text;
+            }
 
             form1.sprawdzWszystekie();
+        }
+
+        public void setValue(int value)
+        {
+            setText(value.ToString());
         }
 
         public void setColor(Color color)
