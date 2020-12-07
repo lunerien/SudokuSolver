@@ -137,7 +137,15 @@ namespace SuDoKuSePuKu
 
         private void jedna_brakujaca()
         {
-
+            for(int i = 0; i < 9; i++)
+            {
+                brakujacaWiersz(i);
+                brakujacaKolumna(i);
+                for (int ii = 0; ii < 9; ii++)
+                {
+                    brakujacaKwadrat(i, ii);
+                }
+            }
         }
 
         private void brakujacaWiersz(int x)
@@ -153,6 +161,15 @@ namespace SuDoKuSePuKu
                     numArr[counter++] = nf.value;
                 }
             }
+        }
+
+        private void brakujacaKolumna(int y)
+        {
+
+        }
+
+        private void brakujacaKwadrat(int y, int x)
+        {
 
         }
     }
