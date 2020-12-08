@@ -1,8 +1,10 @@
-﻿using System;
+﻿using CsvHelper;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -133,6 +135,7 @@ namespace SuDoKuSePuKu
         private void button1_Click(object sender, EventArgs e)
         {
             jedna_brakujaca();
+            wykluczKwadrat(0,0);
         }
 
         private void jedna_brakujaca()
@@ -155,7 +158,7 @@ namespace SuDoKuSePuKu
             return myRange.ToArray();
         }
 
-        private void brakujacaWiersz(int x)
+        private int[] brakujacaWiersz(int x)
         {
             int counter = 0;
             int puste_pole = 0;
@@ -177,17 +180,19 @@ namespace SuDoKuSePuKu
 
 
             }
+            int[] myRange = zwrocBrakujace(numArr);
+
             if (counter == 8)
             {
 
-                int[] myRange = zwrocBrakujace(numArr);
                 nf = arr[puste_pole, x];
                 nf.setText(myRange[0].ToString());
                 //https://stackoverflow.com/questions/3700448/how-can-i-print-the-contents-of-an-array-horizontally
             }
+            return myRange;
         }
 
-        private void brakujacaKolumna(int y)
+        private int[] brakujacaKolumna(int y)
         {
             int counter = 0;
             int puste_pole = 0;
@@ -204,22 +209,20 @@ namespace SuDoKuSePuKu
                 {
                     puste_pole = i;
                 }
-
-
-
-
             }
+            int[] myRange = zwrocBrakujace(numArr);
+
             if (counter == 8)
             {
 
-                int[] myRange = zwrocBrakujace(numArr);
                 nf = arr[y, puste_pole];
                 nf.setText(myRange[0].ToString());
                 //https://stackoverflow.com/questions/3700448/how-can-i-print-the-contents-of-an-array-horizontally
             }
+            return myRange;
         }
 
-        private void brakujacaKwadrat(int y, int x)
+        private int[] brakujacaKwadrat(int y, int x)
         {
             int[] numArr = new int[9];
             NumField nf;
@@ -243,19 +246,48 @@ namespace SuDoKuSePuKu
                     }
                 }
             }
+            int[] myRange = zwrocBrakujace(numArr);
 
             if (counter == 8)
             {
 
-                int[] myRange = zwrocBrakujace(numArr);
                 nf = arr[brakujaca_pole_x, brakujaca_pole_y];
                 nf.setText(myRange[0].ToString());
             }
+            return myRange; 
         }
-        private void wykluczanie(int x, int y)
+        private void wykluczKwadrat(int x, int y)
         {
-            int[,,] brakujace_w_okienku = new int[9, 9, 9];
+            int[,] brakujace_w_okienku = new int[9, 9];
+            //int[] numArr = new int[9];
+            NumField nf;
+            int counter = 0;
+            int brakujaca_pole_x = 0, brakujaca_pole_y = 0;
+            int xk = ((int)(x / 3)) * 3;
+            int yk = ((int)(y / 3)) * 3;
+
+            Console.WriteLine(string.Join(",",brakujacaKwadrat(x,y)));
             
+
+        }
+        //https://stackoverflow.com/questions/5282999/reading-csv-file-and-storing-values-into-an-array
+        private void button2_Click(object sender, EventArgs e)
+        {
+            using(var reader = new StreamReader("../../sudoku1.csv"))
+            {
+                int counter = 0;
+                while(!reader.EndOfStream)
+                {
+                    var line = reader.ReadLine();
+                    var values = line.Split(',');
+
+                    for(int i = 0; i<9; i++)
+                    {
+                        arr[i,counter].setText(values[i]);
+                    }
+                    counter++;
+                }
+            }
         }
     }
 }

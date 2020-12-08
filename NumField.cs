@@ -61,6 +61,8 @@ namespace SuDoKuSePuKu
 
         public void setText(String text)
         {
+            if (text == "0")
+                text = "";
 
             if (text.Length > 1)
             {
@@ -84,7 +86,10 @@ namespace SuDoKuSePuKu
 
         public void setValue(int value)
         {
-            setText(value.ToString());
+            if (value == 0)
+                setText("");
+            else
+                setText(value.ToString());
         }
 
         public void setColor(Color color)
