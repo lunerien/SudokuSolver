@@ -56,7 +56,6 @@ namespace SuDoKuSePuKu
         {
             TextBox tb = (TextBox)sender;
             setText(tb.Text);
-
         }
 
         public void setText(String text)
@@ -69,7 +68,7 @@ namespace SuDoKuSePuKu
                 text = text[0].ToString();
             }
 
-            isSet = Int32.TryParse(text, out int value);
+            isSet = Int32.TryParse(text, out int value) && text != "";
             if (isSet)
             {
                 this.value = value;
@@ -82,6 +81,8 @@ namespace SuDoKuSePuKu
             }
 
             form1.sprawdzWszystekie();
+            form1.is_solved();
+
         }
 
         public void setValue(int value)

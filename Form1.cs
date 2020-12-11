@@ -17,9 +17,17 @@ namespace SuDoKuSePuKu
     {
         NumField[,] arr = new NumField[9, 9];
         bool isCorrect = true;
+        bool solved = false;
+         
         public Form1()
         {
             InitializeComponent();
+            string[] fileEntries = Directory.GetFiles("../../Sudoku");
+            
+            foreach (string fileName in fileEntries)
+                comboBox1.Items.Add(fileName.Split('\\')[1]);
+            comboBox1.SelectedIndex = 0;
+
             for (int i = 0; i < 9; i++)
             {
                 for (int ii = 0; ii < 9; ii++)
@@ -134,8 +142,40 @@ namespace SuDoKuSePuKu
 
         private void button1_Click(object sender, EventArgs e)
         {
-            jedna_brakujaca();
-            wykluczKwadrat(0,0);
+            var max_prob = 100;
+            while (!is_solved() && max_prob-- >= 0 )
+            {
+                jedna_brakujaca();
+                wyklucz();
+            }
+            if(max_prob <= 1)
+            {
+                label1.Text = "Nie potrafię tego rozwiązać";
+            }
+        }
+
+        public bool is_solved()
+        {
+            var counter = 0;
+            var dest = 81;
+            for(int i = 0; i < 9; i++)
+            {
+                for(int ii = 0; ii < 9; ii++)
+                {
+                    if (arr[i, ii].isSet)
+                    {
+                        counter++;
+                    }
+                    else
+                    {
+                        return false;
+
+                    }
+                }
+            }
+            label1.Text = "Wygrana";
+            return true;
+
         }
 
         private void jedna_brakujaca()
@@ -155,6 +195,7 @@ namespace SuDoKuSePuKu
         {
             HashSet<int> myRange = new HashSet<int>(Enumerable.Range(1, 9));
             myRange.ExceptWith(numArr);
+           
             return myRange.ToArray();
         }
 
@@ -256,24 +297,97 @@ namespace SuDoKuSePuKu
             }
             return myRange; 
         }
-        private void wykluczKwadrat(int x, int y)
+
+        int[] zamien_braukjace_na_te_ktore_sa(int[] brakujce)
         {
-            int[,] brakujace_w_okienku = new int[9, 9];
-            //int[] numArr = new int[9];
+            int[] liczby = { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+            foreach(int el in brakujce)
+            {
+                liczby = liczby.Where(val => val != el).ToArray();
+            }
+            return liczby;
+        }
+
+        private void wyklucz()
+        {
+            
+            for(int i = 0; i < 9; i += 3)
+            {
+                for(int ii = 0; ii < 9; ii +=3)
+                {
+                    wykluczKwadrat(i, ii);
+                }
+            }
+        }
+
+        private int[,,] wykluczKwadrat(int x, int y)
+        {
+            int[,,] brakujace = new int[3,3,9];
             NumField nf;
-            int counter = 0;
-            int brakujaca_pole_x = 0, brakujaca_pole_y = 0;
+
             int xk = ((int)(x / 3)) * 3;
             int yk = ((int)(y / 3)) * 3;
 
-            Console.WriteLine(string.Join(",",brakujacaKwadrat(x,y)));
-            
+            int[] brakujace_w_kwadracie = zamien_braukjace_na_te_ktore_sa(brakujacaKwadrat(x, y));
 
+            int ly = 0;
+            int lx = 0;
+
+            int[] brakujace_1;
+
+            for(int i = xk; i < xk+3; i++)
+            {
+                ly = 0;
+                for (int ii = yk; ii < yk+3; ii++)
+                {
+
+                    nf = arr[ii, i];
+                    if (!nf.isSet)
+                    {
+                        int[] cyfry = { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+                        foreach(int el in brakujace_w_kwadracie)
+                        {
+                            cyfry = cyfry.Where(val => val != el).ToArray();
+                        }
+
+                        //sprawdzamy wiersze jeżeli jest w damyn jest to usuwamy z brakujacych
+                        brakujace_1 = brakujacaWiersz(i);
+                        brakujace_1 = zamien_braukjace_na_te_ktore_sa(brakujace_1);
+                        foreach (int el in brakujace_1)
+                        {
+                            cyfry = cyfry.Where(val => val != el).ToArray();
+                        }
+
+                        //sprawdzamy kolumny jeżeli jest to usuwamy z brakujacych
+                        brakujace_1 = brakujacaKolumna(ii);
+                        brakujace_1 = zamien_braukjace_na_te_ktore_sa(brakujace_1);
+                        foreach (int el in brakujace_1)
+                        {
+                            cyfry = cyfry.Where(val => val != el).ToArray();
+                        }
+                        //cyfry = cyfry.Where(val => val != 0).ToArray();
+                        for (int iii = 0; iii< cyfry.Length;iii++)
+                        {
+                            brakujace[lx, ly, iii] = cyfry[iii];
+                           
+                        }
+                        
+                        //jeżeli jest 1 to wpisz w puste
+                        if(cyfry.Length == 1)
+                        {
+                            nf.setValue(cyfry[0]);
+                        }
+                    }
+                    ly++;
+                }
+                lx++;
+            }
+            
+            return brakujace;
         }
-        //https://stackoverflow.com/questions/5282999/reading-csv-file-and-storing-values-into-an-array
         private void button2_Click(object sender, EventArgs e)
         {
-            using(var reader = new StreamReader("../../sudoku1.csv"))
+            using(var reader = new StreamReader($"../../sudoku/{comboBox1.Text}"))
             {
                 int counter = 0;
                 while(!reader.EndOfStream)
