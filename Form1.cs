@@ -173,8 +173,12 @@ namespace SuDoKuSePuKu
                     }
                 }
             }
-            label1.Text = "Wygrana";
-            return true;
+            if (isCorrect)
+            {
+                label1.Text = "Wygrana";
+                return true;
+            }
+            return false;
 
         }
 
